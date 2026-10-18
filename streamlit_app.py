@@ -12,22 +12,76 @@ import tempfile
 import time
 from typing import Any, List, Dict
 
+# Enforce 100% offline mode
+os.environ["HF_HUB_OFFLINE"] = "1"
+os.environ["TRANSFORMERS_OFFLINE"] = "1"
+os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
+
+import sys
+if sys.platform == "win32":
+    # Prevent harmless Windows asyncio WinError 10054 ConnectionResetError in ProactorBasePipeTransport
+    import asyncio
+    import socket
+    try:
+        from asyncio.proactor_events import _ProactorBasePipeTransport
+        _orig_call_conn_lost = _ProactorBasePipeTransport._call_connection_lost
+
+        def _safe_call_connection_lost(self, exc=None):
+            try:
+                _orig_call_conn_lost(self, exc)
+            except (ConnectionResetError, OSError):
+                if hasattr(self, "_sock") and self._sock is not None:
+                    try:
+                        self._sock.close()
+                    except OSError:
+                        pass
+                    self._sock = None
+                if hasattr(self, "_server") and self._server is not None:
+                    try:
+                        self._server._detach(self)
+                    except Exception:
+                        pass
+                    self._server = None
+                self._called_connection_lost = True
+
+        _ProactorBasePipeTransport._call_connection_lost = _safe_call_connection_lost
+    except Exception:
+        pass
+
 import streamlit as st
+import re
 
 # Import RAG and Agent functionality (consistent with app.py)
 try:
     from rag import ingest_pdf, search_clauses
-except ImportError:
+except Exception as e:
     def ingest_pdf(temp_path: str) -> bool:
         return True
     def search_clauses(query: str) -> list[dict]:
         return []
 
 try:
-    from agent import get_legal_answer
-except ImportError:
+    from agent import (
+        get_legal_answer,
+        check_ollama_status,
+        get_available_models,
+        get_active_model,
+        set_active_model,
+        normalize_model_name,
+    )
+except Exception as e:
     def get_legal_answer(query: str, context: Any) -> str:
         return "Legal analysis service not available."
+    def check_ollama_status(ollama_url: str = "http://127.0.0.1:11434") -> dict:
+        return {"connected": False, "models": [], "active_model": "gemma3n:e2b", "model_ready": False}
+    def get_available_models(ollama_url: str = "http://127.0.0.1:11434") -> list:
+        return []
+    def get_active_model() -> str:
+        return "gemma3n:e2b"
+    def set_active_model(model_name: str) -> str:
+        return "gemma3n:e2b"
+    def normalize_model_name(name: str) -> str:
+        return "gemma3n:e2b"
 
 
 st.set_page_config(
@@ -654,7 +708,7 @@ def select_finding(finding_id: int) -> None:
     st.session_state.selected_finding = finding_id
 
 
-def analyze_document_topics() -> list[dict[str, Any]]:
+def analyze_document_topics(progress_bar: Any = None) -> list[dict[str, Any]]:
     """Generate dynamic findings for the uploaded document using search_clauses and get_legal_answer."""
     topics = [
         {
@@ -687,7 +741,12 @@ def analyze_document_topics() -> list[dict[str, Any]]:
     ]
 
     findings = []
-    for t in topics:
+    total_topics = len(topics)
+    for idx, t in enumerate(topics):
+        if progress_bar:
+            pct = 60 + int((idx / total_topics) * 35)
+            progress_bar.progress(pct, text=f"Analyzing {t['title']} with Gemma 3n…")
+
         try:
             clauses = search_clauses(t["query"])
         except Exception:
@@ -718,7 +777,26 @@ def analyze_document_topics() -> list[dict[str, Any]]:
                 summary = "Retrieved governing clauses from agreement."
 
             detail = summary
-            first_sentence = summary.split(". ")[0] + ("." if "." in summary else "")
+
+            # Clean card summary: remove category headers, raw citations, and legal disclaimer
+            clean_text = summary
+            clean_text = re.sub(r"This tool is for preliminary document understanding.*", "", clean_text, flags=re.DOTALL)
+            clean_text = re.sub(r'\[Source:\s*".*?"\s*\|\s*Page:[^\]]+\]', '', clean_text)
+            clean_text = re.sub(r'\[Source:\s*.*?\|\s*Page:[^\]]+\]', '', clean_text)
+
+            bullet_lines = [
+                re.sub(r"^[-*•]\s*", "", line).strip()
+                for line in clean_text.splitlines()
+                if line.strip()
+                and not any(line.strip().casefold().startswith(cat.casefold()) for cat in ["Obligations", "Rights", "Penalties", "Deadlines", "#"])
+                and "no relevant statement" not in line.lower()
+            ]
+
+            if bullet_lines:
+                first_sentence = bullet_lines[0]
+            else:
+                first_sentence = clean_text.strip().split(". ")[0] + ("." if "." in clean_text else "")
+                first_sentence = re.sub(r"^#+\s*", "", first_sentence).strip()
 
             findings.append(
                 {
@@ -812,16 +890,84 @@ def render_sidebar() -> None:
             unsafe_allow_html=True,
         )
 
+        # AI Engine & Model Settings Card
+        engine_status = check_ollama_status()
+        active_model = get_active_model()
+        available_models = engine_status.get("models", [])
+        is_conn = engine_status.get("connected", False)
+
+        st.markdown(
+            f"""
+            <div class="sidebar-label">AI Engine</div>
+            <div class="privacy-card" style="margin-bottom:0.75rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <span class="file-mini-title">Ollama Engine</span>
+                    <span style="font-size:0.56rem;font-weight:800;color:{'#62c69b' if is_conn else '#f36b4f'};">
+                        {'● ONLINE' if is_conn else '○ OFFLINE'}
+                    </span>
+                </div>
+                <div class="privacy-copy" style="margin-top:0.35rem;">
+                    Active: <code style="color:#fff;background:rgba(255,255,255,.1);padding:1px 5px;border-radius:4px;">{html.escape(active_model)}</code>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        # Model selector dropdown
+        model_options = list(dict.fromkeys([active_model] + available_models + ["gemma3n:e2b", "gemma2:2b"]))
+        selected_model = st.selectbox(
+            "Active Model",
+            options=model_options,
+            index=model_options.index(active_model) if active_model in model_options else 0,
+            key="sb_model_select",
+            label_visibility="collapsed",
+        )
+        if selected_model != active_model:
+            set_active_model(selected_model)
+            st.rerun()
+
+        # Handle alias indication if user originally specified gemma3n:2be
+        raw_env_model = os.getenv("CLAUSEGUARD_MODEL", os.getenv("MODEL_NAME", ""))
+        if raw_env_model and raw_env_model.lower() in ("gemma3n:2be", "gemma3n-2be", "gemma3n:2b"):
+            st.caption("⚡ Auto-aliased: `gemma3n:2be` ➔ `gemma3n:e2b`")
+
+        # Quick model verification button
+        if st.button("Verify Gemma inference", icon=":material/bolt:", use_container_width=True):
+            with st.spinner(f"Verifying {active_model} on-device..."):
+                t0 = time.time()
+                test_ans = get_legal_answer(
+                    "What is the lease deposit?",
+                    [{"text": "The security deposit is $1500 payable upon execution.", "page": "1"}],
+                )
+                elapsed = time.time() - t0
+                if "Obligations" in test_ans or "1500" in test_ans:
+                    st.success(f"✓ {active_model} verified in {elapsed:.1f}s")
+                else:
+                    st.info(f"Verified ({elapsed:.1f}s)")
+
 
 def render_topbar() -> None:
     doc_name = st.session_state.get("uploaded_name", "Rental agreement")
+    status = check_ollama_status()
+    active_model = get_active_model()
+    if status.get("connected") and status.get("model_ready"):
+        dot_color = "#55b88d"
+        model_text = f"Local RAG & {active_model} ready"
+    elif status.get("connected"):
+        dot_color = "#e09438"
+        model_text = f"Ollama online · {active_model}"
+    else:
+        dot_color = "#f36b4f"
+        model_text = "Ollama offline · Grounded fallback"
+
     st.markdown(
         f"""
         <div class="topbar">
             <div class="eyebrow">My reviews &nbsp;/&nbsp; {html.escape(doc_name)}</div>
             <div class="model-ready">
-                <span class="model-dot"></span>
-                Local RAG & Gemma ready
+                <span class="model-dot" style="background:{dot_color}"></span>
+                {html.escape(model_text)}
             </div>
         </div>
         """,
@@ -874,7 +1020,7 @@ def render_upload() -> None:
                 # Call ingest_pdf from rag.py
                 ingest_pdf(temp_path)
 
-                progress.progress(55, text="Cross-examining related clauses…")
+                progress.progress(50, text="Cross-examining related clauses…")
                 # Attempt to determine number of pages
                 num_pages = 1
                 try:
@@ -884,8 +1030,8 @@ def render_upload() -> None:
                 except Exception:
                     num_pages = 1
 
-                progress.progress(75, text="Generating legal findings and cross-checks…")
-                dynamic_findings = analyze_document_topics()
+                progress.progress(60, text="Analyzing legal findings with Gemma 3n…")
+                dynamic_findings = analyze_document_topics(progress_bar=progress)
 
                 progress.progress(100, text="Validating source evidence…")
                 time.sleep(0.2)
@@ -1051,7 +1197,7 @@ def render_evidence(finding: dict[str, Any]) -> None:
                     </span>
                 </div>
                 <div class="detail-title">{html.escape(str(finding.get('title', 'Finding')))}</div>
-                <div class="detail-copy">{html.escape(str(finding.get('detail', '')))}</div>
+                <div class="detail-copy" style="white-space: pre-wrap; font-family: inherit; line-height: 1.6;">{html.escape(str(finding.get('detail', '')))}</div>
             </div>
             <div class="detail-body">
                 <div class="evidence-label">Source evidence</div>
@@ -1070,7 +1216,8 @@ def render_evidence(finding: dict[str, Any]) -> None:
 
 def render_assistant_chat_response(explanation: Any, context: Any = None) -> None:
     """Renders the AI response in chat with clear visual separation of explanation and quoted source passages."""
-    st.markdown("#### 💡 AI Legal Explanation")
+    model_tag = get_active_model()
+    st.markdown(f"#### 💡 AI Legal Explanation &nbsp;<span style='font-size:0.68rem;color:#73736b;font-weight:500;'>({model_tag})</span>", unsafe_allow_html=True)
     if isinstance(explanation, dict):
         text = (
             explanation.get("explanation")

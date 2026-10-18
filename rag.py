@@ -4,30 +4,63 @@ import os
 import pickle
 from typing import List, Dict, Any
 
+# Enforce 100% offline mode before importing ML libraries
+os.environ["HF_HUB_OFFLINE"] = "1"
+os.environ["TRANSFORMERS_OFFLINE"] = "1"
+os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
+
 import numpy as np
 import pdfplumber
 import faiss
 from sentence_transformers import SentenceTransformer
 
+class SimpleTextSplitter:
+    """Lightweight offline fallback text splitter."""
+    def __init__(self, chunk_size: int = 500, chunk_overlap: int = 50):
+        self.chunk_size = chunk_size
+        self.chunk_overlap = chunk_overlap
+
+    def split_text(self, text: str) -> list[str]:
+        words = text.split()
+        if not words:
+            return []
+        chunks = []
+        step = max(1, self.chunk_size - self.chunk_overlap)
+        for i in range(0, len(words), step):
+            chunk = " ".join(words[i : i + self.chunk_size])
+            chunks.append(chunk)
+        return chunks
+
+
 try:
     from langchain_text_splitters import TokenTextSplitter
 except ImportError:
-    from langchain_community.document_transformers import TokenTextSplitter
+    try:
+        from langchain_community.document_transformers import TokenTextSplitter
+    except ImportError:
+        TokenTextSplitter = SimpleTextSplitter
 
-# Storage paths for local FAISS index and chunk metadata
-INDEX_PATH = "faiss_index.bin"
-METADATA_PATH = "faiss_metadata.pkl"
-MODEL_NAME = "all-MiniLM-L6-v2"
+# Storage paths for local FAISS index, chunk metadata, and local model weights
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+LOCAL_MODEL_DIR = os.path.join(BASE_DIR, "models", "all-MiniLM-L6-v2")
+INDEX_PATH = os.path.join(BASE_DIR, "faiss_index.bin")
+METADATA_PATH = os.path.join(BASE_DIR, "faiss_metadata.pkl")
 
 # Module-level cached embedding model
+import threading
+
 _embedding_model: SentenceTransformer | None = None
+_model_lock = threading.Lock()
 
 
 def _get_embedding_model() -> SentenceTransformer:
-    """Retrieve or initialize the cached local SentenceTransformer model."""
+    """Retrieve or initialize the cached local SentenceTransformer model in 100% offline mode."""
     global _embedding_model
     if _embedding_model is None:
-        _embedding_model = SentenceTransformer(MODEL_NAME)
+        with _model_lock:
+            if _embedding_model is None:
+                model_target = LOCAL_MODEL_DIR if os.path.isdir(LOCAL_MODEL_DIR) else "all-MiniLM-L6-v2"
+                _embedding_model = SentenceTransformer(model_target, local_files_only=True)
     return _embedding_model
 
 
@@ -88,7 +121,7 @@ def ingest_pdf(file_path: str) -> bool:
     # 3. Generate embeddings locally using sentence-transformers (all-MiniLM-L6-v2)
     model = _get_embedding_model()
     texts_to_embed = [c["text"] for c in chunks]
-    embeddings = model.encode(texts_to_embed, convert_to_numpy=True, normalize_embeddings=True)
+    embeddings = model.encode(texts_to_embed, convert_to_numpy=True, normalize_embeddings=True, show_progress_bar=False)
 
     # 4. Save local FAISS index (IndexFlatIP with normalized vectors = cosine similarity)
     embedding_dim = embeddings.shape[1]
@@ -128,7 +161,7 @@ def search_clauses(query: str, top_k: int = 3) -> list[dict]:
 
     # 2. Embed query locally
     model = _get_embedding_model()
-    query_vector = model.encode([query], convert_to_numpy=True, normalize_embeddings=True)
+    query_vector = model.encode([query], convert_to_numpy=True, normalize_embeddings=True, show_progress_bar=False)
 
     # 3. Search FAISS index
     k = min(top_k, len(chunks))

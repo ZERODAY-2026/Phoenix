@@ -1,4 +1,40 @@
 import os
+# Enforce 100% offline mode
+os.environ["HF_HUB_OFFLINE"] = "1"
+os.environ["TRANSFORMERS_OFFLINE"] = "1"
+os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
+
+import sys
+if sys.platform == "win32":
+    # Prevent harmless Windows asyncio WinError 10054 ConnectionResetError in ProactorBasePipeTransport
+    import asyncio
+    import socket
+    try:
+        from asyncio.proactor_events import _ProactorBasePipeTransport
+        _orig_call_conn_lost = _ProactorBasePipeTransport._call_connection_lost
+
+        def _safe_call_connection_lost(self, exc=None):
+            try:
+                _orig_call_conn_lost(self, exc)
+            except (ConnectionResetError, OSError):
+                if hasattr(self, "_sock") and self._sock is not None:
+                    try:
+                        self._sock.close()
+                    except OSError:
+                        pass
+                    self._sock = None
+                if hasattr(self, "_server") and self._server is not None:
+                    try:
+                        self._server._detach(self)
+                    except Exception:
+                        pass
+                    self._server = None
+                self._called_connection_lost = True
+
+        _ProactorBasePipeTransport._call_connection_lost = _safe_call_connection_lost
+    except Exception:
+        pass
+
 import tempfile
 import streamlit as st
 
