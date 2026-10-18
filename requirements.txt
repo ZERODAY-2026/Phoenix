@@ -1,9 +1,10 @@
-# PLACEHOLDER: R1/R4 replace this with pinned versions after everything works
-# (run: pip freeze > requirements.txt inside the virtual environment, then remove unneeded lines).
-# Expected direct dependencies:
+# Core Dependencies for ClauseGuard AI
 streamlit
 pdfplumber
 sentence-transformers
 numpy
 requests
 pytest
+faiss-cpu
+langchain-community
+tiktoken
