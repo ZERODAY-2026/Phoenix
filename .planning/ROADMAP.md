@@ -22,7 +22,7 @@
 
 **Requirements:** BENCH-01, BENCH-02, BENCH-03, PRIV-03, PRIV-04
 
-**Plans:** 1/5 plans executed
+**Plans:** 2/5 plans executed
 
 Plans:
 **Wave 1**
@@ -31,7 +31,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 01-02-PLAN.md — Embedding setup: download all-MiniLM-L6-v2 to models/, PRIV-03 offline test (completeness + load), PRIV-04 static config tests (loopback URL + local path)
+- [x] 01-02-PLAN.md — Embedding setup: download all-MiniLM-L6-v2 to models/, PRIV-03 offline test (completeness + load), PRIV-04 static config tests (loopback URL + local path)
 - [ ] 01-03-PLAN.md — Benchmark harness: scripts/benchmark.py with 6 metrics via Ollama API, D1_clean_lease.pdf fixture (6-10 pages, 7 topics), sample_documents/README.md update, docs/benchmarks.md scaffold
 
 **Wave 3** *(blocked on Wave 2 completion)*

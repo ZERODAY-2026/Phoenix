@@ -4,14 +4,14 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 1
 status: in-progress
-stopped_at: Completed Plan 01 (Walking Skeleton)
-last_updated: "2026-10-18T16:10:00.000Z"
+stopped_at: Completed Plan 02 (Embedding Offline Tests)
+last_updated: "2026-10-18T20:30:00.000Z"
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 5
-  completed_plans: 1
-  percent: 3
+  completed_plans: 2
+  percent: 6
 ---
 
 # Project State
@@ -100,6 +100,10 @@ All 27 v1 requirements are Active (hypotheses until shipped and validated):
 | OLLAMA_URL hardcoded to 127.0.0.1 | PRIV-04: loopback-only, never LAN in submitted repo | ✓ Good |
 | STUB_LLM=1 backend in llm.py | Unblocks R2/R3/R4 during model benchmarking | ✓ Good |
 | agentic.py deleted | Contained banned gemma2:2b; submission blocker per SUBMISSION_CHECKLIST §F | ✓ Good |
+| save_pretrained() for embedding download | SBERT 3.x+ modern API; saver/loader same code path (D-10) | ✓ Good |
+| 5-file completeness check before load | Partial download is most likely false pass (D-11) | ✓ Good |
+| pytest skipif for gitignored models/ | Fresh clone passes CI before one-time setup (D-11) | ✓ Good |
+| Static config tests for privacy boundary | Proves loopback URL + local path at code level (D-12) | ✓ Good |
 
 ---
 
@@ -124,6 +128,6 @@ All 27 v1 requirements are Active (hypotheses until shipped and validated):
 
 ## Session
 
-**Last session:** 2026-10-18T16:10:00.000Z
-**Stopped at:** Completed Plan 01 (Walking Skeleton)
-**Resume file:** .planning/phases/01-foundation-benchmark/01-CONTEXT.md
+**Last session:** 2026-10-18T20:30:00.000Z
+**Stopped at:** Completed Plan 02 (Embedding Offline Tests)
+**Resume file:** .planning/phases/01-foundation-benchmark/01-02-SUMMARY.md
