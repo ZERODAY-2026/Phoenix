@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+env/
+venv/
+.pytest_cache/
+
+# Secrets
+.env
+*.key
+*.pem
+
+# Models and generated data: never commit
+models/
+*.gguf
+*.safetensors
+*.faiss
+*.pkl
+*.npy
+*.index
+
+# Real or private documents: never commit
+*.pdf
+*.docx
+*.zip
+# ...except our fictional samples
+!sample_documents/*.pdf
+!sample_documents/*.txt
+
+# Local evidence that may contain private data (keep curated copies in docs/evidence/)
+tmp/
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
