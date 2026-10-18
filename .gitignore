@@ -19,6 +19,8 @@ models/
 *.pkl
 *.npy
 *.index
+*.bin
+faiss_index.bin
 
 # Real or private documents: never commit
 *.pdf
@@ -38,7 +40,8 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Local dummy files for UI testing
-agent.py
-rag.py
+# Local files
+agentic.py
 sample_documents/sample_lease.pdf
+
+
