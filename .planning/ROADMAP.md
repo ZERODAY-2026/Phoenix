@@ -20,6 +20,15 @@
 
 **Requirements:** BENCH-01, BENCH-02, BENCH-03, PRIV-03, PRIV-04
 
+**Plans:** 5 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Walking skeleton: config singleton, LLM client with STUB_LLM=1 backend, test infrastructure, pinned requirements, remove banned agentic.py, push backlog
+- [ ] 01-02-PLAN.md — Embedding setup: download all-MiniLM-L6-v2 to models/, PRIV-03 offline test (completeness + load), PRIV-04 static config tests (loopback URL + local path)
+- [ ] 01-03-PLAN.md — Benchmark harness: scripts/benchmark.py with 6 metrics via Ollama API, D1_clean_lease.pdf fixture (6-10 pages, 7 topics), sample_documents/README.md update, docs/benchmarks.md scaffold
+- [ ] 01-04-PLAN.md — Contract tests: STUB_LLM=1 test (Answer-dict JSON validity, json_mode=False, check_model_ready structure), full test suite verification (7 tests green)
+- [ ] 01-05-PLAN.md — Benchmark execution + selection: run on both machines (3×2=6 rows), apply CPU-only selection criteria, lock MODEL_NAME in config.py, record in PROJECT_MASTER.md §7.3, commit before prune, netstat loopback capture, ollama rm losers
+
 ---
 
 ### Phase 2: Ingestion & Retrieval
