@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 1
+current_phase: 1 (Foundation & Benchmark)
 status: in-progress
-stopped_at: Completed Plan 02 (Embedding Offline Tests)
-last_updated: "2026-10-18T20:30:00.000Z"
+stopped_at: Completed Plan 03 (Benchmark Harness & D1 Fixture)
+last_updated: "2026-10-18T10:49:51.144Z"
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 5
-  completed_plans: 2
-  percent: 6
+  completed_plans: 3
+  percent: 0
 ---
 
 # Project State
@@ -104,6 +104,11 @@ All 27 v1 requirements are Active (hypotheses until shipped and validated):
 | 5-file completeness check before load | Partial download is most likely false pass (D-11) | ✓ Good |
 | pytest skipif for gitignored models/ | Fresh clone passes CI before one-time setup (D-11) | ✓ Good |
 | Static config tests for privacy boundary | Proves loopback URL + local path at code level (D-12) | ✓ Good |
+| Benchmark harness uses Ollama HTTP API directly | RESEARCH.md Pattern 2; no app imports; reproducible metrics | ✓ Good |
+| Quote accuracy = normalized verbatim substring | Matches ARCHITECTURE.md §3.2 verify_findings algorithm | ✓ Good |
+| JSON validity = parse + Answer-dict schema | format:json + 7 required keys per finding (ARCHITECTURE.md §4) | ✓ Good |
+| Peak RAM via OS process (Get-Process) | Avoids ollama ps SIZE mmap double-count (Pitfall 3) | ✓ Good |
+| D1 landlord "Aldric Thorne" for Phase 6 leak search | Unique fictional name per PRIVACY.md §9 | ✓ Good |
 
 ---
 
@@ -128,6 +133,6 @@ All 27 v1 requirements are Active (hypotheses until shipped and validated):
 
 ## Session
 
-**Last session:** 2026-10-18T20:30:00.000Z
-**Stopped at:** Completed Plan 02 (Embedding Offline Tests)
-**Resume file:** .planning/phases/01-foundation-benchmark/01-02-SUMMARY.md
+**Last session:** 2026-10-18T10:49:51.128Z
+**Stopped at:** Completed Plan 03 (Benchmark Harness & D1 Fixture)
+**Resume file:** .planning/phases/01-foundation-benchmark/01-03-SUMMARY.md
