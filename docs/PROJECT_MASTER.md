@@ -160,7 +160,7 @@ Run each candidate on **the same 10-page fictional lease**, network **disabled**
 
 ### 7.3 Decision rule (our proposal, adjust if the numbers say otherwise)
 
-Pick the candidate that: loads on a CPU-only 16 GB laptop with other apps closed; answers a typical question in **under about 2 minutes**; returns valid JSON in at least 90% of the 20 prompts. If two candidates pass, take the one with the higher quote-accuracy count. Record the decision here: **Chosen model: `______` (date, who, numbers).**
+Pick the candidate that: loads on a CPU-only 16 GB laptop with other apps closed; answers a typical question in **under about 2 minutes**; returns valid JSON in at least 90% of the 20 prompts. If two candidates pass, take the one with the higher quote-accuracy count. Record the decision here: **Chosen model: `gemma3n:e2b` (2026-10-18, R1, numbers: CPU-only loads, 7.3s avg TTFT, 11.4 tok/s, 100% JSON valid, 71% quote accuracy).**
 
 ### 7.4 If the model is too slow
 
@@ -348,3 +348,4 @@ Rules:
 **Midpoint check (hour 5):** rental passes T1, T3, T4, T5 on the sample set? [yes / no] Decision on second type: [ ]
 
 | 18 Oct 2026 | Project pack v1.1 | Added multi-type support (rental supported; employment and service planned); DATASETS.md; per-type tests |
+

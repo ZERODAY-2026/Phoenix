@@ -9,6 +9,9 @@
 
 | Model | Machine | Size (GB) | Peak RAM (GB) | Peak VRAM (GB) | TTFT (s) | Tok/s | JSON Valid % | Quote Acc % |
 |-------|---------|-----------|---------------|----------------|----------|-------|--------------|-------------|
+| gemma3n:e2b | CPU-only-16GB | 7.3 | 0.0 | 5.3 | 7.39 | 11.4 | 100% | 71% |
+| gemma4:e2b | CPU-only-16GB | 0.0 | 0.0 | 0.0 | 0.00 | 0.0 | 0% | 0% |
+| gemma4:e2b | CPU-only-16GB | 0.0 | 0.0 | 0.0 | 0.00 | 0.0 | 0% | 0% |
 | gemma3n:e2b | RTX-2050-laptop | 7.8 | X.X | X.X | X.X | X.X | XX% | XX% |
 | gemma3n:e2b | CPU-only-16GB | 7.8 | X.X | 0 | X.X | X.X | XX% | XX% |
 | gemma4:e2b | RTX-2050-laptop | X.X | X.X | X.X | X.X | X.X | XX% | XX% |
@@ -18,7 +21,7 @@
 
 ## Selection Record
 
-**Chosen model:** `___` (date, who, numbers: CPU-only loads, <2min, 100% JSON valid, highest quote accuracy)
+**Chosen model:** `gemma3n:e2b` (2026-10-18, R1, numbers: CPU-only loads, 7.3s avg TTFT, 11.4 tok/s, 100% JSON valid, 71% quote accuracy)
 **Recorded in:** `src/config.py` `MODEL_NAME` and `docs/PROJECT_MASTER.md` §7.3
 
 ## Request Configuration (for reproducibility)
@@ -34,3 +37,5 @@
 ```
 
 **Note on JSON validity granularity:** With N=8 prompts, ">90%" requires 8/8 = 100% (7/8 = 87.5% fails). This is recorded explicitly per RESEARCH.md Pattern 2 granularity caveat.
+
+
