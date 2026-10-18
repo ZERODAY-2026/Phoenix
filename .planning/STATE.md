@@ -2,23 +2,23 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 0 (not started)
-status: unknown
-stopped_at: Phase 1 context gathered
-last_updated: "2026-10-18T09:41:48.530Z"
+current_phase: 1
+status: in-progress
+stopped_at: Completed Plan 01 (Walking Skeleton)
+last_updated: "2026-10-18T16:10:00.000Z"
 progress:
   total_phases: 6
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  total_plans: 5
+  completed_plans: 1
+  percent: 3
 ---
 
 # Project State
 
 **Project:** ClauseGuard
 **Initialized:** 2026-10-18
-**Current Phase:** 0 (not started)
+**Current Phase:** 1 (Foundation & Benchmark)
 **Mode:** mvp
 
 ---
@@ -37,7 +37,7 @@ See: .planning/PROJECT.md (updated 2026-10-18 after initialization)
 
 | Phase | Name | Status | Started | Completed |
 |-------|------|--------|---------|-----------|
-| 1 | Foundation & Benchmark | Pending | — | — |
+| 1 | Foundation & Benchmark | In Progress | 2026-10-18 | — |
 | 2 | Ingestion & Retrieval | Pending | — | — |
 | 3 | Guardrails & Answer Pipeline | Pending | — | — |
 | 4 | UI Integration | Pending | — | — |
@@ -96,6 +96,10 @@ All 27 v1 requirements are Active (hypotheses until shipped and validated):
 | In-memory only | Judges check temp files | ✓ Good |
 | Local embedding model | sentence-transformers fetches from HF | ✓ Good |
 | Rental only for v1 | Narrow scope is strength | ✓ Good |
+| MODEL_NAME overridable by CLAUSEGUARD_MODEL env | Benchmark decides final model; D-04 single source of truth | ✓ Good |
+| OLLAMA_URL hardcoded to 127.0.0.1 | PRIV-04: loopback-only, never LAN in submitted repo | ✓ Good |
+| STUB_LLM=1 backend in llm.py | Unblocks R2/R3/R4 during model benchmarking | ✓ Good |
+| agentic.py deleted | Contained banned gemma2:2b; submission blocker per SUBMISSION_CHECKLIST §F | ✓ Good |
 
 ---
 
@@ -120,6 +124,6 @@ All 27 v1 requirements are Active (hypotheses until shipped and validated):
 
 ## Session
 
-**Last session:** 2026-10-18T09:41:48.520Z
-**Stopped at:** Phase 1 context gathered
+**Last session:** 2026-10-18T16:10:00.000Z
+**Stopped at:** Completed Plan 01 (Walking Skeleton)
 **Resume file:** .planning/phases/01-foundation-benchmark/01-CONTEXT.md

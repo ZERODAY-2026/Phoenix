@@ -22,12 +22,12 @@
 
 **Requirements:** BENCH-01, BENCH-02, BENCH-03, PRIV-03, PRIV-04
 
-**Plans:** 5 plans
+**Plans:** 1/5 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 01-01-PLAN.md — Walking skeleton: config singleton, LLM client with STUB_LLM=1 backend, test infrastructure, pinned requirements, remove banned agentic.py, push backlog
+- [x] 01-01-PLAN.md — Walking skeleton: config singleton, LLM client with STUB_LLM=1 backend, test infrastructure, pinned requirements, remove banned agentic.py, push backlog
 
 **Wave 2** *(blocked on Wave 1 completion)*
 

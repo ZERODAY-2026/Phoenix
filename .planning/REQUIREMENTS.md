@@ -44,12 +44,12 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **PRIV-01**: Offline demonstration — Wi-Fi off, connection monitor shows no external calls
 - [ ] **PRIV-02**: No temporary files — in-memory processing only, no document text or embeddings written to disk
-- [ ] **PRIV-03**: Local embedding model loaded from disk with HF_HUB_OFFLINE=1 and TRANSFORMERS_OFFLINE=1
-- [ ] **PRIV-04**: Ollama bound to 127.0.0.1 only; no LAN serving in submitted demo
+- [x] **PRIV-03**: Local embedding model loaded from disk with HF_HUB_OFFLINE=1 and TRANSFORMERS_OFFLINE=1
+- [x] **PRIV-04**: Ollama bound to 127.0.0.1 only; no LAN serving in submitted demo
 
 ### Benchmarking
 
-- [ ] **BENCH-01**: Benchmark Gemma candidates (3n E2B, 4 E2B, 4 E2B-QAT) on same fictional lease with network disabled
+- [x] **BENCH-01**: Benchmark Gemma candidates (3n E2B, 4 E2B, 4 E2B-QAT) on same fictional lease with network disabled
 - [ ] **BENCH-02**: Record model size, peak RAM/VRAM, TTFT, tokens/sec, JSON validity %, quote accuracy %
 - [ ] **BENCH-03**: Choose model meeting criteria: loads on 16GB CPU laptop, <2 min response, >90% JSON validity
 
@@ -123,9 +123,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UI-03 | Phase 4 | Pending |
 | PRIV-01 | Phase 6 | Pending |
 | PRIV-02 | Phase 2, 4, 6 | Pending |
-| PRIV-03 | Phase 1 | Pending |
-| PRIV-04 | Phase 1, 4 | Pending |
-| BENCH-01 | Phase 1 | Pending |
+| PRIV-03 | Phase 1 | Complete |
+| PRIV-04 | Phase 1, 4 | Complete |
+| BENCH-01 | Phase 1 | Complete |
 | BENCH-02 | Phase 1 | Pending |
 | BENCH-03 | Phase 1 | Pending |
 | DOCS-01 | Phase 5, 6 | Pending |
@@ -133,6 +133,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TEST-01 | Phase 2, 3, 6 | Pending |
 
 **Coverage:**
+
 - v1 requirements: 27 total
 - Mapped to phases: 27
 - Unmapped: 0 ✓
