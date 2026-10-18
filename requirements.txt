@@ -1,9 +1,7 @@
-# PLACEHOLDER: R1/R4 replace this with pinned versions after everything works
-# (run: pip freeze > requirements.txt inside the virtual environment, then remove unneeded lines).
-# Expected direct dependencies:
-streamlit
-pdfplumber
-sentence-transformers
-numpy
-requests
-pytest
+streamlit==1.38.0
+pdfplumber==0.11.4
+sentence-transformers==3.0.1
+numpy==1.26.4
+requests==2.32.3
+pydantic==2.8.2
+pytest==8.3.2
