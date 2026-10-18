@@ -37,3 +37,8 @@ tmp/
 Thumbs.db
 .vscode/
 .idea/
+
+# Local dummy files for UI testing
+agent.py
+rag.py
+sample_documents/sample_lease.pdf
