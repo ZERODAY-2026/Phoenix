@@ -22,7 +22,7 @@
 
 **Requirements:** BENCH-01, BENCH-02, BENCH-03, PRIV-03, PRIV-04
 
-**Plans:** 3/5 plans executed
+**Plans:** 4/5 plans executed
 
 Plans:
 **Wave 1**
@@ -36,7 +36,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 01-04-PLAN.md — Contract tests: STUB_LLM=1 test (Answer-dict JSON validity, json_mode=False, check_model_ready structure), full test suite verification (7 tests green)
+- [x] 01-04-PLAN.md — Contract tests: STUB_LLM=1 test (Answer-dict JSON validity, json_mode=False, check_model_ready structure), full test suite verification (7 tests green)
 
 **Wave 4** *(blocked on Wave 3 completion)*
 

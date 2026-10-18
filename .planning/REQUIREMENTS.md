@@ -50,7 +50,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Benchmarking
 
 - [x] **BENCH-01**: Benchmark Gemma candidates (3n E2B, 4 E2B, 4 E2B-QAT) on same fictional lease with network disabled
-- [ ] **BENCH-02**: Record model size, peak RAM/VRAM, TTFT, tokens/sec, JSON validity %, quote accuracy %
+- [x] **BENCH-02**: Record model size, peak RAM/VRAM, TTFT, tokens/sec, JSON validity %, quote accuracy %
 - [ ] **BENCH-03**: Choose model meeting criteria: loads on 16GB CPU laptop, <2 min response, >90% JSON validity
 
 ### Documentation
@@ -126,7 +126,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PRIV-03 | Phase 1 | Complete |
 | PRIV-04 | Phase 1, 4 | Complete |
 | BENCH-01 | Phase 1 | Complete |
-| BENCH-02 | Phase 1 | Pending |
+| BENCH-02 | Phase 1 | Complete |
 | BENCH-03 | Phase 1 | Pending |
 | DOCS-01 | Phase 5, 6 | Pending |
 | DOCS-02 | Phase 6 | Pending |
@@ -140,4 +140,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-10-18*
-*Last updated: 2026-10-18 after initial definition*
+*Last updated: 2026-10-18 after Plan 04 completion*
